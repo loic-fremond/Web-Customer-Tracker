@@ -41,6 +41,8 @@
 							<td>
 								<!-- display the update link -->
 								<a href=${updateLink}>Update</a>
+								|
+								Delete
 							</td>
 						</tr>
 					</c:forEach>
