@@ -18,9 +18,9 @@ public class CustomerServiceImplementation implements CustomerService {
 	
 	@Override
 	@Transactional
-	public List<Customer> getCustomers() {
+	public List<Customer> getCustomers(int theSortField) {
 
-		return customerDAO.getCustomers();
+		return customerDAO.getCustomers(theSortField);
 	}
 
 	@Override

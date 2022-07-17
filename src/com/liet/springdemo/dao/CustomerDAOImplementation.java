@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.liet.springdemo.entity.Customer;
+import com.liet.springdemo.util.SortUtils;
 
 @Repository
 public class CustomerDAOImplementation implements CustomerDAO {
@@ -19,13 +20,31 @@ public class CustomerDAOImplementation implements CustomerDAO {
 	private SessionFactory sessionFactory;
 	
 	@Override
-	public List<Customer> getCustomers() {
+	public List<Customer> getCustomers(int theSortField) {
 		
 		// get the current hibernate session
 		Session currentSession = sessionFactory.getCurrentSession();
 		
+		// determine sort field
+		String theFieldName = null;
+		switch (theSortField) {
+		case SortUtils.FIRST_NAME:
+			theFieldName = "firstName";
+			break;
+		case SortUtils.LAST_NAME:
+			theFieldName="lastName";
+			break;
+		case SortUtils.EMAIL:
+			theFieldName="email";
+			break;
+		// if nothing matches default behavior will be to sort by lastName
+		default:
+			theFieldName="lastName";
+		}
+		
 		// create a query
-		Query<Customer> theQuery = currentSession.createQuery("from Customer order by lastName asc", Customer.class);
+		String queryString = "from Customer order by " + theFieldName;
+		Query<Customer> theQuery = currentSession.createQuery(queryString, Customer.class);
 		
 		// execute query and get result list
 		List<Customer> customers = theQuery.getResultList();
@@ -74,7 +93,7 @@ public class CustomerDAOImplementation implements CustomerDAO {
 	public List<Customer> searchCustomers(String theSearchName) {
 		// get current hibernate session
 		Session currentSession = sessionFactory.getCurrentSession();
-		Query theQuery = null;
+		Query<Customer> theQuery = null;
 		
 		// only search by name if theSearchName is not empty
 		if (theSearchName != null && theSearchName.trim().length() > 0) {
